@@ -39,3 +39,7 @@ class _MhLogFilter extends LogFilter {
     return kProfileMode || kDebugMode;
   }
 }
+
+extension StringLogExt on String? {
+  logD() {}
+}
