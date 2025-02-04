@@ -1,6 +1,5 @@
-import 'package:landlord_mtech/base/util/text_util.dart';
-import 'package:landlord_mtech/generated/json/base/json_convert_content.dart';
 
+import '../../generated/json/base/json_convert_content.dart';
 import '../error/api_error_code.dart';
 import '../error/http_error.dart';
 

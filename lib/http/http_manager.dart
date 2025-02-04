@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:mh_base/http/service/http_service.dart';
 
 import 'diofactory/dio_factory.dart';
-import 'model/common_headers_entity.dart';
+import 'model/base/common_headers_entity.dart';
 
 enum HttpHost { test, landlord, tenant, textIn, personal }
 

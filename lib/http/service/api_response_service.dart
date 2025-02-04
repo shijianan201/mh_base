@@ -1,22 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:landlord_mtech/base/console_logger.dart';
-import 'package:landlord_mtech/base/global.dart';
-import 'package:landlord_mtech/base/http/api_request_host.dart';
-import 'package:landlord_mtech/base/http/error/http_error.dart';
-import 'package:landlord_mtech/base/http/http_method.dart';
-import 'package:landlord_mtech/base/http/http_result.dart';
-import 'package:landlord_mtech/base/http/service/http_service.dart';
-import 'package:landlord_mtech/base/languages.dart';
-import 'package:landlord_mtech/base/toast.dart';
-import 'package:landlord_mtech/base/util/text_util.dart';
-import 'package:landlord_mtech/common/user_manager.dart';
+import 'package:mh_base/log/mh_logger.dart';
 
+import '../api_request_host.dart';
 import '../error/api_error_code.dart';
+import '../error/http_error.dart';
+import '../http_method.dart';
+import '../http_result.dart';
 import '../model/api_response.dart';
 import '../model/loading_config.dart';
 import '../model/toast_config.dart';
+import 'http_service.dart';
 
 abstract class ApiResponseService extends HttpService {
   ApiResponseService({required super.dio});
@@ -120,12 +115,6 @@ abstract class ApiResponseService extends HttpService {
           onReceiveProgress: onReceiveProgress);
       ApiResponse<T> response = ApiResponse.fromJson(res);
       if (response.isSuccess()) {
-        if (toastConfig != null && toastConfig.enableToast) {
-          String successMessage = toastConfig.successMessage ?? "";
-          if (successMessage.isNotEmpty) {
-            MToast.showShort(successMessage);
-          }
-        }
         EasyLoading.dismiss();
         if (response.data == null) {
           "請求成功,但是數據是null".logD();
@@ -136,28 +125,9 @@ abstract class ApiResponseService extends HttpService {
       } else {
         ApiError apiError = response.getApiError();
         EasyLoading.dismiss();
-        Log.e("請求失敗，${apiError.toString()}");
-        if (response.code == ApiErrorCode.loginInvalid) {
-          bool res = await UserManager.instance.clear(byUser: false);
-          Log.d("清除用戶信息:$res");
-          MToast.show(Language.current().toast_user_invalid);
-          Global.navigate2login();
-        }
         throw apiError;
       }
     } catch (error) {
-      String? errorMessage = toastConfig?.errorMessage;
-      if(error is ApiError){
-        String? apiErrorMessage = error.serverMessage;
-        errorMessage = toastConfig?.errorMessage ??
-            (apiErrorMessage ?? Language.current().toast_request_failed("${error.serverCode}"));
-      }
-      if (toastConfig != null && !toastConfig.enableToast) {
-        errorMessage = null;
-      }
-      if (!errorMessage.isNullOrEmpty()) {
-        errorMessage.toast();
-      }
       EasyLoading.dismiss();
       if(error is ApiError){
         rethrow;
@@ -315,7 +285,6 @@ abstract class ApiResponseService extends HttpService {
     future.then((value) {
       onSuccess.call(value);
     }).catchError((error) {
-      Log.d(error);
       onError?.call(error);
     });
   }
