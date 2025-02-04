@@ -25,14 +25,14 @@ abstract class CommonProviderPage<E extends BaseRouteExtra,
   Consumer<T> getPageConsumer() {
     return Consumer(builder: (
       BuildContext context,
-      T value,
+      T controller,
       Widget? child,
     ) {
-      return buildProviderBody(context, value, child);
+      return buildProviderBody(context, controller, child);
     });
   }
 
-  Widget buildProviderBody(BuildContext context, T value, Widget? child);
+  Widget buildProviderBody(BuildContext context, T controller, Widget? child);
 
   T getPageNotifier(BuildContext context) {
     return Provider.of(context, listen: false);

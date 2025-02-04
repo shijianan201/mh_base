@@ -3,14 +3,9 @@ import 'package:flutter/material.dart';
 ///通用页面封装
 abstract class CommonPage extends StatelessWidget {
   final Color? backgroundColor;
-  final bool? resizeToAvoidBottomInset;
   bool canPop = true;
 
-  CommonPage(
-      {super.key,
-      this.backgroundColor,
-      this.resizeToAvoidBottomInset,
-      this.canPop = true});
+  CommonPage({super.key, this.backgroundColor, this.canPop = true});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +19,12 @@ abstract class CommonPage extends StatelessWidget {
         child: SafeArea(child: buildBody(context)),
       ),
       backgroundColor: backgroundColor,
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset(),
     );
+  }
+
+  bool? resizeToAvoidBottomInset() {
+    return null;
   }
 
   void onPopInvokedWithResult(
