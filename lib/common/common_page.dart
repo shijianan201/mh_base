@@ -10,17 +10,22 @@ abstract class CommonPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: extendBodyBehindAppBar(),
       appBar: appBar(context),
       body: PopScope(
         canPop: canPop,
         onPopInvokedWithResult: (c, p) {
           onPopInvokedWithResult(context, c, p);
         },
-        child: SafeArea(child: buildBody(context)),
+        child: SafeArea(top: false, bottom: false, child: buildBody(context)),
       ),
       backgroundColor: backgroundColor,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset(),
     );
+  }
+
+  bool extendBodyBehindAppBar() {
+    return false;
   }
 
   bool? resizeToAvoidBottomInset() {
