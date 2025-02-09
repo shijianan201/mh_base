@@ -44,4 +44,29 @@ abstract class CommonPage extends StatelessWidget {
   PreferredSizeWidget? appBar(BuildContext context) {
     return null;
   }
+
+  AppBar? getBackAppBar(BuildContext context, {String? title}) {
+    return AppBar(
+      leading: InkWell(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 32,
+          ),
+          child: Icon(
+            Icons.keyboard_backspace,
+            color: Color(0xff333333),
+            size: 24,
+          ),
+        ),
+      ),
+      leadingWidth: 56,
+      title: Text(
+        title ?? "",
+        style: TextStyle(fontSize: 20, color: Color(0xFf333333)),
+      ),
+    );
+  }
 }
