@@ -3,16 +3,23 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:mh_base/http/service/http_service.dart';
+import 'package:mh_base/log/mh_logger.dart';
 
 import 'diofactory/dio_factory.dart';
 import 'model/base/common_headers_entity.dart';
 
-enum HttpHost { test, landlord, tenant, textIn, personal }
+class HttpUserInfo{
+  final String uid;
+  final String authorization;
+
+  HttpUserInfo(this.authorization, {required this.uid});
+}
 
 class HttpManager {
   static bool hasInit = false;
-  static HashMap<HttpHost, Dio> dioCache = HashMap();
+  static HashMap<String, Dio> dioCache = HashMap();
   static HashMap<String, HttpService> serviceCache = HashMap();
+  static HttpUserInfo? userInfo;
 
   static void init(HashSet<HttpService> serviceSets) {
     assert(!hasInit);
@@ -22,7 +29,7 @@ class HttpManager {
     hasInit = true;
   }
 
-  static void registerHost(HttpHost host, DioFactory factory) {
+  static void registerHost(String host, DioFactory factory) {
     assert(!hasInit);
     if (dioCache.containsKey(host)) {
       return;
@@ -30,7 +37,12 @@ class HttpManager {
     dioCache.putIfAbsent(host, () => factory.createDio());
   }
 
-  static Dio getDio(HttpHost host) {
+  static void bindUser(HttpUserInfo userInfo){
+    HttpManager.userInfo = userInfo;
+    logD("http bind user uid = ${userInfo.uid}, auth = ${userInfo.authorization}");
+  }
+
+  static Dio getDio(String host) {
     Dio? dio = dioCache[host];
     assert(dio != null);
     return dio!;
@@ -53,12 +65,10 @@ class HttpManager {
     if (Platform.isIOS) {
       platform = "IOS";
     }
-    String uid = "";
-    String authorization = "";
     CommonHeadersEntity commonHeadersEntity = CommonHeadersEntity();
-    commonHeadersEntity.authorization = "Bearer $authorization";
+    commonHeadersEntity.authorization = "Bearer ${userInfo?.authorization}";
     commonHeadersEntity.platform = platform;
-    commonHeadersEntity.uid = uid;
+    commonHeadersEntity.uid = userInfo?.uid ?? "";
     return commonHeadersEntity.toJson();
   }
 }

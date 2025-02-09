@@ -4,30 +4,44 @@ import 'package:mh_base/common/common_page.dart';
 import 'package:mh_base/page/extra/base_route_extra.dart';
 import 'package:provider/provider.dart';
 
-class CommonChangeNotifier extends ChangeNotifier {}
+import '../http/api_request_host.dart';
+
+class CommonChangeNotifier extends ChangeNotifier {
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+}
 
 ///基础页面通知者
-class CommonPageNotifier<T extends BaseRouteExtra>
-    extends CommonChangeNotifier {
+class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier
+    with ApiRequestHost {
   final BuildContext context;
   final GoRouterState state;
 
   CommonPageNotifier({required this.context, required this.state});
+
+  @override
+  void dispose() {
+    super.dispose();
+    releaseAllRequests();
+  }
+
 }
 
 abstract class CommonProviderPage<E extends BaseRouteExtra,
-    T extends CommonPageNotifier<E>> extends CommonPage {
+T extends CommonPageNotifier<E>> extends CommonPage {
   @override
   Widget buildBody(BuildContext context) {
     return getPageConsumer();
   }
 
   Consumer<T> getPageConsumer() {
-    return Consumer(builder: (
-      BuildContext context,
-      T controller,
-      Widget? child,
-    ) {
+    return Consumer(builder: (BuildContext context,
+        T controller,
+        Widget? child,) {
       return buildProviderBody(context, controller, child);
     });
   }
@@ -41,5 +55,5 @@ abstract class CommonProviderPage<E extends BaseRouteExtra,
 
 ///通用使用provider更新数据的使用CommonRouteExtra传递参数的页面基类
 abstract class CommonProviderExtraPage<
-        T extends CommonPageNotifier<CommonRouteExtra>>
+T extends CommonPageNotifier<CommonRouteExtra>>
     extends CommonProviderPage<CommonRouteExtra, T> {}

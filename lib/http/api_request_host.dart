@@ -1,6 +1,6 @@
 import 'package:async/async.dart';
 
-abstract class ApiRequestHost {
+mixin class ApiRequestHost {
   final List<CancelableOperation> apiRequests = [];
 
   Future<T> registerRequest<T>(Future<T> requestFuture) {

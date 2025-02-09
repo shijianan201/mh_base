@@ -39,8 +39,8 @@ abstract class ApiResponseService extends HttpService {
           onReceiveProgress: onReceiveProgress);
       return HttpResult(true, res);
     } catch (e) {
-      int? errorCode = null;
-      String? errorMessage = null;
+      int? errorCode;
+      String? errorMessage;
       if(e is ApiError){
         errorCode =  (e).serverCode;
         errorMessage = (e).serverMessage;

@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 
 import '../error/http_error.dart';
-import '../http_manager.dart';
 import '../model/loading_config.dart';
 import '../model/toast_config.dart';
 
@@ -22,15 +19,6 @@ abstract class HttpService {
       ToastConfig? toastConfig,
       ProgressCallback? onSendProgress,
       ProgressCallback? onReceiveProgress}) async {
-    if (options != null) {
-      if (options.headers != null) {
-        options.headers?.addAll(HttpManager.getCommonHeaders());
-      } else {
-        options.headers = HttpManager.getCommonHeaders();
-      }
-    } else {
-      options = Options(headers: HttpManager.getCommonHeaders());
-    }
     Response response = await dio.request(path,
         data: data,
         queryParameters: queryParameters,
