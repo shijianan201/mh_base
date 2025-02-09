@@ -1,3 +1,5 @@
+import 'package:mh_base/http/error/http_error.dart';
+
 class HttpResult<T> {
   T? response;
   dynamic error;
@@ -6,7 +8,7 @@ class HttpResult<T> {
   bool success;
 
   HttpResult(this.success, this.response,
-      {dynamic error, this.errorCode, this.errorMessage});
+      {this.error, this.errorCode, this.errorMessage});
 
   T getData() {
     assert(response != null);
@@ -28,6 +30,10 @@ class HttpResult<T> {
 
   bool isSuccess() {
     return success;
+  }
+
+  bool isApiError() {
+    return error is ApiError;
   }
 
   static HttpResult<T> getSuccess<T>(T? data) {
