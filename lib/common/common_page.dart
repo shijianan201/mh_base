@@ -45,23 +45,26 @@ abstract class CommonPage extends StatelessWidget {
     return null;
   }
 
-  AppBar? getBackAppBar(BuildContext context, {String? title}) {
+  AppBar? getBackAppBar(BuildContext context,
+      {String? title, bool showBack = true}) {
     return AppBar(
-      leading: InkWell(
-        onTap: () {
-          Navigator.of(context).pop();
-        },
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 32,
-          ),
-          child: Icon(
-            Icons.keyboard_backspace,
-            color: Color(0xff333333),
-            size: 24,
-          ),
-        ),
-      ),
+      leading: showBack
+          ? InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 32,
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Color(0xff333333),
+                  size: 24,
+                ),
+              ),
+            )
+          : SizedBox(),
       leadingWidth: 56,
       title: Text(
         title ?? "",
