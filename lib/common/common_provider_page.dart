@@ -27,12 +27,12 @@ class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier
     releaseAllRequests();
   }
 
-  T? getRouteExtra() {
+  T getRouteExtra() {
     var ex = this.state.extra;
     if (ex is T) {
       return ex;
     } else {
-      return null;
+      throw Exception("getRouteExtra failed: ${ex.runtimeType},$ex");
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mh_base/log/mh_logger.dart';
+import 'package:mh_base/widget/mh_toast.dart';
 
 import '../api_request_host.dart';
 import '../error/api_error_code.dart';
@@ -41,19 +42,20 @@ abstract class ApiResponseService extends HttpService {
     } catch (e) {
       int? errorCode;
       String? errorMessage;
-      if(e is ApiError){
-        errorCode =  (e).serverCode;
+      if (e is ApiError) {
+        errorCode = (e).serverCode;
         errorMessage = (e).serverMessage;
-      }else if(e is HttpError){
-        errorCode =  (e).statusCode;
-        errorMessage =  (e).statusMessage;
-      }else if(e is HttpUnknownError){
-        errorCode =  -1;
+      } else if (e is HttpError) {
+        errorCode = (e).statusCode;
+        errorMessage = (e).statusMessage;
+      } else if (e is HttpUnknownError) {
+        errorCode = -1;
         errorMessage = e.errorType.name;
-      }else{
-        errorCode =  null;
+      } else {
+        errorCode = null;
       }
-      return HttpResult.getError(error: e,errorCode: errorCode,errorMessage: errorMessage);
+      return HttpResult.getError(
+          error: e, errorCode: errorCode, errorMessage: errorMessage);
     }
   }
 
@@ -92,7 +94,7 @@ abstract class ApiResponseService extends HttpService {
     }
   }
 
-  Future<T> requestForApiResponse<T>(String path,
+  Future<T?> requestForApiResponse<T>(String path,
       {Object? data,
       Map<String, dynamic>? queryParameters,
       CancelToken? cancelToken,
@@ -102,6 +104,23 @@ abstract class ApiResponseService extends HttpService {
       ToastConfig? toastConfig,
       ProgressCallback? onSendProgress,
       ProgressCallback? onReceiveProgress}) async {
+    void showToast(bool success, {String? errorMessage}) {
+      if (toastConfig == null || !toastConfig.enableToast) {
+        return;
+      }
+      if (success) {
+        if (toastConfig.successMessage != null) {
+          showShortToast(toastConfig.successMessage);
+        }
+      } else {
+        if (toastConfig.errorMessage != null) {
+          showShortToast(toastConfig.errorMessage);
+        } else {
+          errorMessage.toast();
+        }
+      }
+    }
+
     try {
       Map<String, dynamic> res = await request(path,
           data: data,
@@ -115,23 +134,24 @@ abstract class ApiResponseService extends HttpService {
           onReceiveProgress: onReceiveProgress);
       ApiResponse<T> response = ApiResponse.fromJson(res);
       if (response.isSuccess()) {
-        EasyLoading.dismiss();
+        showToast(true);
         if (response.data == null) {
-          "請求成功,但是數據是null".logD();
-          return Future.value();
+          return Future.value(null);
         } else {
           return Future.value(response.data);
         }
       } else {
         ApiError apiError = response.getApiError();
-        EasyLoading.dismiss();
+        showToast(false,
+            errorMessage:
+                "code = ${apiError.serverCode},message = ${apiError.serverMessage}");
         throw apiError;
       }
     } catch (error) {
-      EasyLoading.dismiss();
-      if(error is ApiError){
+      if (error is ApiError) {
         rethrow;
-      }else{
+      } else {
+        showToast(false, errorMessage: "$error");
         throw HttpUnknownError(HttpUnknownErrorType.dioError, error: error);
       }
     }
@@ -160,7 +180,7 @@ abstract class ApiResponseService extends HttpService {
           mockAssetsFilePath: mockAssetsFilePath,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
-    }catch(e){
+    } catch (e) {
       return Future.error(e);
     }
   }
@@ -190,7 +210,7 @@ abstract class ApiResponseService extends HttpService {
           mockAssetsFilePath: mockAssetsFilePath,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
-    }catch(e){
+    } catch (e) {
       return Future.error(e);
     }
   }

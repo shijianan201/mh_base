@@ -1,0 +1,72 @@
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+
+class HiveStorage {
+  static Box? _userBox;
+  static Box? _globalBox;
+
+  static const _globalUserIdKey = "last_login_user_id";
+
+  static Future<void> init({String? subDir, String? globalBoxName}) async {
+    await Hive.initFlutter(subDir);
+    _globalBox = await Hive.openBox(globalBoxName ?? "HiveStorage_global_box");
+    String? userId =
+        await getFromGlobal<String>(_globalUserIdKey, defaultValue: null);
+    if (userId != null && userId.isNotEmpty) {
+      await openUserBox(userId);
+    }
+  }
+
+  static Future<Box?> openUserBox(String userId) async {
+    _userBox = await Hive.openBox(userId);
+    return _userBox;
+  }
+
+  static Future<void>? put2user(dynamic key, dynamic value) {
+    return _userBox?.put(key, value);
+  }
+
+  static Future<void>? put2global(dynamic key, dynamic value) {
+    return _globalBox?.put(key, value);
+  }
+
+  static T? getFromUser<T>(dynamic key, {T? defaultValue}) {
+    try {
+      return _userBox?.get(key, defaultValue: defaultValue);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static T? getFromGlobal<T>(dynamic key, {T? defaultValue}) {
+    try {
+      return _globalBox?.get(key, defaultValue: defaultValue);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<void>? closeUserBox() {
+    try {
+      return _userBox?.close();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<int?> clearUserBox() async {
+    try {
+      return await _userBox?.clear();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Future<void>? closeAll() {
+    try {
+      return Hive.close();
+    } catch (e) {
+      return null;
+    }
+  }
+}
