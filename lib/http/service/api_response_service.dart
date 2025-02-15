@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:mh_base/log/mh_logger.dart';
+import 'package:mh_base/http/error/api_error_code.dart';
 import 'package:mh_base/widget/mh_toast.dart';
 
 import '../api_request_host.dart';
-import '../error/api_error_code.dart';
 import '../error/http_error.dart';
 import '../http_method.dart';
 import '../http_result.dart';
@@ -142,9 +140,13 @@ abstract class ApiResponseService extends HttpService {
         }
       } else {
         ApiError apiError = response.getApiError();
-        showToast(false,
-            errorMessage:
-                "code = ${apiError.serverCode},message = ${apiError.serverMessage}");
+        if (apiError.serverCode == ApiErrorCode.success_201) {
+          apiError.data = response.data;
+        } else {
+          showToast(false,
+              errorMessage:
+                  "code = ${apiError.serverCode},message = ${apiError.serverMessage}");
+        }
         throw apiError;
       }
     } catch (error) {

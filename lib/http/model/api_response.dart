@@ -1,3 +1,4 @@
+import 'package:mh_base/http/http_manager.dart';
 
 import '../../generated/json/base/json_convert_content.dart';
 import '../error/api_error_code.dart';
@@ -50,11 +51,19 @@ ApiResponse<T> $ApiResponseFromJson<T>(Map<String, dynamic> json) {
       return apiRespEntity;
     }
   }
-  final T? data = JsonConvert.fromJsonAsT(dataRes);
-  if (data != null) {
-    apiRespEntity.data = data;
+  if (HttpManager.jsonConverter != null) {
+    final T? data = HttpManager.jsonConverter!.call<T>(dataRes);
+    if (data != null) {
+      apiRespEntity.data = data;
+    }
+    return apiRespEntity;
+  } else {
+    final T? data = JsonConvert.fromJsonAsT(dataRes);
+    if (data != null) {
+      apiRespEntity.data = data;
+    }
+    return apiRespEntity;
   }
-  return apiRespEntity;
 }
 
 Map<String, dynamic> $ApiResponseToJson(ApiResponse response) {

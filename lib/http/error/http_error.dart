@@ -31,6 +31,7 @@ class HttpUnknownError extends IOException {
 class ApiError implements IOException {
   final int? serverCode;
   final String? serverMessage;
+  dynamic data;
 
   ApiError(this.serverCode, this.serverMessage);
 

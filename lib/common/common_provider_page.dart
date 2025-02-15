@@ -6,20 +6,25 @@ import 'package:provider/provider.dart';
 
 import '../http/api_request_host.dart';
 
-class CommonChangeNotifier extends ChangeNotifier {
+class SimpleChangeNotifier extends ChangeNotifier {
   @override
   void dispose() {
     super.dispose();
   }
 }
 
+class CommonChangeNotifier extends SimpleChangeNotifier {
+  final BuildContext context;
+
+  CommonChangeNotifier({required this.context});
+}
+
 ///基础页面通知者
 class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier
     with ApiRequestHost {
-  final BuildContext context;
   final GoRouterState state;
 
-  CommonPageNotifier({required this.context, required this.state});
+  CommonPageNotifier({required this.state, required super.context});
 
   @override
   void dispose() {
@@ -37,8 +42,8 @@ class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier
   }
 }
 
-abstract class CommonProviderPage<E extends BaseRouteExtra,
-    T extends CommonPageNotifier<E>> extends CommonPage {
+abstract class SimpleProviderPage<T extends CommonChangeNotifier>
+    extends CommonPage {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (
@@ -71,6 +76,9 @@ abstract class CommonProviderPage<E extends BaseRouteExtra,
     return Provider.of(context, listen: false);
   }
 }
+
+abstract class CommonProviderPage<E extends BaseRouteExtra,
+    T extends CommonPageNotifier<E>> extends SimpleProviderPage<T> {}
 
 ///通用使用provider更新数据的使用CommonRouteExtra传递参数的页面基类
 abstract class CommonProviderExtraPage<

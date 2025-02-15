@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:mh_base/http/service/http_service.dart';
 import 'package:mh_base/log/mh_logger.dart';
@@ -8,7 +7,7 @@ import 'package:mh_base/log/mh_logger.dart';
 import 'diofactory/dio_factory.dart';
 import 'model/base/common_headers_entity.dart';
 
-class HttpUserInfo{
+class HttpUserInfo {
   final String uid;
   final String authorization;
 
@@ -20,12 +19,15 @@ class HttpManager {
   static HashMap<String, Dio> dioCache = HashMap();
   static HashMap<String, HttpService> serviceCache = HashMap();
   static HttpUserInfo? userInfo;
+  static T? Function<T>(dynamic)? jsonConverter;
 
-  static void init(HashSet<HttpService> serviceSets) {
+  static void init(HashSet<HttpService> serviceSets,
+      T? Function<T>(dynamic)? jsonConverter) {
     assert(!hasInit);
     for (var element in serviceSets) {
       serviceCache[element.runtimeType.toString()] = element;
     }
+    HttpManager.jsonConverter = jsonConverter;
     hasInit = true;
   }
 
@@ -37,9 +39,14 @@ class HttpManager {
     dioCache.putIfAbsent(host, () => factory.createDio());
   }
 
-  static void bindUser(HttpUserInfo userInfo){
+  static T? convertFromJson<T>(dynamic json) {
+    return jsonConverter?.call<T>(json);
+  }
+
+  static void bindUser(HttpUserInfo userInfo) {
     HttpManager.userInfo = userInfo;
-    logD("http bind user uid = ${userInfo.uid}, auth = ${userInfo.authorization}");
+    logD(
+        "http bind user uid = ${userInfo.uid}, auth = ${userInfo.authorization}");
   }
 
   static Dio getDio(String host) {

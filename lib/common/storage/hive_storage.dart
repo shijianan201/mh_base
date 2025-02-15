@@ -11,15 +11,20 @@ class HiveStorage {
     await Hive.initFlutter(subDir);
     _globalBox = await Hive.openBox(globalBoxName ?? "HiveStorage_global_box");
     String? userId =
-        await getFromGlobal<String>(_globalUserIdKey, defaultValue: null);
+        getFromGlobal<String>(_globalUserIdKey, defaultValue: null);
     if (userId != null && userId.isNotEmpty) {
       await openUserBox(userId);
     }
   }
 
   static Future<Box?> openUserBox(String userId) async {
+    await saveUser2global(userId);
     _userBox = await Hive.openBox(userId);
     return _userBox;
+  }
+
+  static Future<void>? saveUser2global(String uid) {
+    return _globalBox?.put(_globalUserIdKey, uid);
   }
 
   static Future<void>? put2user(dynamic key, dynamic value) {
