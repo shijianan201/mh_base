@@ -143,9 +143,7 @@ abstract class ApiResponseService extends HttpService {
         if (apiError.serverCode == ApiErrorCode.success_201) {
           apiError.data = response.data;
         } else {
-          showToast(false,
-              errorMessage:
-                  "code = ${apiError.serverCode},message = ${apiError.serverMessage}");
+          showToast(false, errorMessage: "${apiError.serverMessage}");
         }
         throw apiError;
       }
