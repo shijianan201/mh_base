@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mh_base/http/error/api_error_code.dart';
+import 'package:mh_base/widget/mh_loading.dart';
 import 'package:mh_base/widget/mh_toast.dart';
 
 import '../api_request_host.dart';
@@ -120,6 +121,11 @@ abstract class ApiResponseService extends HttpService {
     }
 
     try {
+      if (loadingConfig != null) {
+        MhLoading.showLoading(
+            status: loadingConfig.message,
+            dismissOnTap: loadingConfig.dismissOnTap);
+      }
       Map<String, dynamic> res = await request(path,
           data: data,
           queryParameters: queryParameters,
@@ -130,6 +136,9 @@ abstract class ApiResponseService extends HttpService {
           mockAssetsFilePath: mockAssetsFilePath,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
+      if (loadingConfig != null) {
+        MhLoading.hideLoading();
+      }
       ApiResponse<T> response = ApiResponse.fromJson(res);
       if (response.isSuccess()) {
         showToast(true);
@@ -148,6 +157,9 @@ abstract class ApiResponseService extends HttpService {
         throw apiError;
       }
     } catch (error) {
+      if (loadingConfig != null) {
+        MhLoading.hideLoading();
+      }
       if (error is ApiError) {
         rethrow;
       } else {

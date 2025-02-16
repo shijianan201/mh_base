@@ -17,4 +17,21 @@ class MhLoading {
       ..userInteractions = true
       ..dismissOnTap = false;
   }
+
+  static void showLoading({
+    String? status,
+    Widget? indicator,
+    EasyLoadingMaskType? maskType,
+    bool? dismissOnTap,
+  }) {
+    EasyLoading.show(
+        status: status,
+        indicator: indicator,
+        maskType: maskType,
+        dismissOnTap: dismissOnTap);
+  }
+
+  static void hideLoading() {
+    EasyLoading.dismiss();
+  }
 }
