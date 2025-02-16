@@ -35,6 +35,10 @@ class HiveStorage {
     return _globalBox?.put(key, value);
   }
 
+  static Future<void> userLogout() async {
+    return _globalBox?.delete(_globalUserIdKey);
+  }
+
   static T? getFromUser<T>(dynamic key, {T? defaultValue}) {
     try {
       return _userBox?.get(key, defaultValue: defaultValue);
