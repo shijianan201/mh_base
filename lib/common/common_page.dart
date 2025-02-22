@@ -46,7 +46,7 @@ abstract class CommonPage extends StatelessWidget {
   }
 
   AppBar? getBackAppBar(BuildContext context,
-      {String? title, bool showBack = true}) {
+      {String? title, bool showBack = true,List<Widget>? actions}) {
     return AppBar(
       leading: showBack
           ? InkWell(
@@ -66,6 +66,7 @@ abstract class CommonPage extends StatelessWidget {
             )
           : SizedBox(),
       leadingWidth: 56,
+      actions: actions,
       title: Text(
         title ?? "",
         style: TextStyle(fontSize: 20, color: Color(0xFf333333)),

@@ -31,6 +31,8 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   phone_numbers_parser: ^9.0.3
+  image_picker: ^1.1.2
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:
