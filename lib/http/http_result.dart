@@ -36,6 +36,14 @@ class HttpResult<T> {
     return error is ApiError;
   }
 
+  int? getApiErrorCode(){
+    if(isApiError()){
+      return (error as ApiError).serverCode;
+    }else{
+      return null;
+    }
+  }
+
   static HttpResult<T> getSuccess<T>(T? data) {
     return HttpResult(true, data);
   }

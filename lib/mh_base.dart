@@ -10,7 +10,6 @@ class MhBase {
   static Future<void> initEnvironment() async {
     logD(
         "kDebugMode = $kDebugMode,kProfileMode = $kProfileMode,kReleaseMode = $kReleaseMode");
-    MhLoading.init();
     if (kDebugMode) {}
     if (Platform.isAndroid) {
       SystemUiOverlayStyle style = SystemUiOverlayStyle(

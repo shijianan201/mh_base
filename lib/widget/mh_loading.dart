@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class MhLoading {
-  static void init() {
+  static TransitionBuilder init() {
     EasyLoading.instance
       ..displayDuration = const Duration(milliseconds: 2000)
       ..indicatorType = EasyLoadingIndicatorType.fadingCircle
@@ -16,6 +16,7 @@ class MhLoading {
       ..maskColor = Colors.blue.withOpacity(0.5)
       ..userInteractions = true
       ..dismissOnTap = false;
+    return EasyLoading.init();
   }
 
   static void showLoading({
