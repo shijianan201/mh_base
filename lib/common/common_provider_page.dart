@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../http/api_request_host.dart';
 
-class SimpleChangeNotifier extends ChangeNotifier {
+class SimpleChangeNotifier extends ChangeNotifier with ApiRequestHost  {
   @override
   void dispose() {
     super.dispose();
@@ -20,8 +20,7 @@ class CommonChangeNotifier extends SimpleChangeNotifier {
 }
 
 ///基础页面通知者
-class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier
-    with ApiRequestHost {
+class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier {
   final GoRouterState state;
 
   CommonPageNotifier({required this.state, required super.context});

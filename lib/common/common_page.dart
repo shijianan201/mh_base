@@ -51,9 +51,11 @@ abstract class CommonPage extends StatelessWidget {
   AppBar? getBackAppBar(BuildContext context,
       {String? title, bool showBack = true,
         Color? foregroundColor,
+        bool centerTitle = true,
         List<Widget>? actions,Color? backgroundColor}) {
     return AppBar(
       backgroundColor: backgroundColor,
+      centerTitle: centerTitle,
       leading: showBack
           ? InkWell(
               onTap: () {
@@ -61,10 +63,10 @@ abstract class CommonPage extends StatelessWidget {
               },
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: 32,
+                  left: 28,
                 ),
                 child: Icon(
-                  Icons.arrow_back,
+                  Icons.arrow_back_ios,
                   color: foregroundColor ?? Color(0xff333333),
                   size: 24,
                 ),
@@ -75,7 +77,7 @@ abstract class CommonPage extends StatelessWidget {
       actions: actions,
       title: Text(
         title ?? "",
-        style: TextStyle(fontSize: 20, color:foregroundColor ??  Color(0xFf333333)),
+        style: TextStyle(fontSize: 16, color:foregroundColor ??  Color(0xFf333333)),
       ),
     );
   }

@@ -21,14 +21,17 @@ class NfcManager{
     }
   }
 
+  int _count = 1;
+
   Future<void> startSession(ValueChanged<String> onTagChange) async {
     if(_listening){
       return;
     }
+    _count++;
     var a = await isAvailable();
     if(!a){
       await Future.delayed(Duration(seconds: 10));
-      onTagChange("yeyyeyryerytest");
+      onTagChange("01931939139139$_count");
       return;
     }
     _listening = true;
@@ -37,7 +40,7 @@ class NfcManager{
       onTagChange(tag.id);
     });
     await Future.delayed(Duration(seconds: 10));
-    onTagChange("yeyyeyryerytest");
+    onTagChange("01931939139139$_count");
   }
 
   Future<void> stopSession() async {
