@@ -1,12 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mh_base/common/common_page.dart';
+import 'package:mh_base/common/util/run_util.dart';
 import 'package:mh_base/page/extra/base_route_extra.dart';
 import 'package:provider/provider.dart';
 
 import '../http/api_request_host.dart';
 
-class SimpleChangeNotifier extends ChangeNotifier with ApiRequestHost  {
+class SimpleChangeNotifier extends ChangeNotifier with ApiRequestHost {
+
+  void runDelayed(Function runnable,
+      {Duration duration = Duration.zero}) async {
+    await Future.delayed(duration);
+    await RunUtil.runAtNextFrameCome((d) async {
+      runnable.call();
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -20,7 +30,8 @@ class CommonChangeNotifier extends SimpleChangeNotifier {
 }
 
 ///基础页面通知者
-class CommonPageNotifier<T extends BaseRouteExtra> extends CommonChangeNotifier {
+class CommonPageNotifier<T extends BaseRouteExtra>
+    extends CommonChangeNotifier {
   final GoRouterState state;
 
   CommonPageNotifier({required this.state, required super.context});

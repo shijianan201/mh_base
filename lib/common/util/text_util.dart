@@ -11,4 +11,21 @@ class TextUtil {
     var res = EmailValidator.validate(text);
     return res;
   }
+
+  static String? formatSecretPhoneNumber(String phoneNumber){
+    if(phoneNumber.length < 5){
+      return phoneNumber;
+    }else{
+      return phoneNumber.replaceRange(2, phoneNumber.length - 3, '***');
+    }
+  }
+
+  static String? formatSecretEmail(String email){
+    var lastIndex = email.lastIndexOf('@');
+    if(lastIndex < 0){
+      return email.replaceRange(3, email.length, "***");
+    }else{
+      return email.replaceRange(3, lastIndex, "***");
+    }
+  }
 }

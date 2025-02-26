@@ -46,6 +46,7 @@ dependencies:
   pull_to_refresh_flutter3: ^2.0.2
   event_bus: ^2.0.1
   email_validator: ^3.0.0
+  package_info_plus: ^8.3.0
 
 dev_dependencies:
   flutter_test:

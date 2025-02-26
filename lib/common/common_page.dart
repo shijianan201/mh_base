@@ -52,7 +52,7 @@ abstract class CommonPage extends StatelessWidget {
       {String? title, bool showBack = true,
         Color? foregroundColor,
         bool centerTitle = true,
-        List<Widget>? actions,Color? backgroundColor}) {
+        List<Widget>? actions,Color backgroundColor = Colors.transparent}) {
     return AppBar(
       backgroundColor: backgroundColor,
       centerTitle: centerTitle,
