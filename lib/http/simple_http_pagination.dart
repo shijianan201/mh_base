@@ -17,6 +17,7 @@ class SimpleHttpPagination<T> {
   SimpleHttpPagination(
       {this.pageSize = 10,
       this.pageNo = 1,
+        required this.dataList,
       required this.onLoadData});
 
   Future<RefreshResult> refresh(
@@ -72,6 +73,16 @@ class SimpleHttpPagination<T> {
   //       error: res.error,
   //       itemCount: dataList.length);
   // }
+
+  void addData(T data){
+    dataList.add(data);
+  }
+
+  void removeList(List<T> removeList){
+    for (var e in removeList) {
+      dataList.remove(e);
+    }
+  }
 
   void dispose() {
     //cancel请求啥的可以放在这

@@ -4,7 +4,7 @@ import 'package:event_bus/event_bus.dart';
 
 import 'common_event.dart';
 
-void sendCommonEvent(EventType eventType,
+void sendCommonEvent(int eventType,
     {dynamic extra, dynamic extra2, dynamic extra3}) {
   MhEventBus.instance
       .sendCommonEvent(eventType, extra: extra, extra2: extra2, extra3: extra3);
@@ -25,7 +25,7 @@ class MhEventBus {
     eventBus.fire(event);
   }
 
-  void sendCommonEvent(EventType eventType,
+  void sendCommonEvent(int eventType,
       {dynamic extra, dynamic extra2, dynamic extra3}) {
     eventBus.fire(
         CommonEvent(eventType, extra: extra, extra2: extra2, extra3: extra3));
@@ -39,7 +39,14 @@ class MhEventBus {
 abstract mixin class EventOwner {
   final List<StreamSubscription> eventSubscriptions = [];
 
+  bool enableEventBus() {
+    return false;
+  }
+
   void listenEvent<T>() {
+    if(!enableEventBus()){
+      return;
+    }
     var res = MhEventBus.instance.listen<T>((event) {
       if (event is CommonEvent) {
         onReceiveCommonEvent(event);
@@ -51,6 +58,9 @@ abstract mixin class EventOwner {
   }
 
   void listenEventByCallback<T>(Function(T event) callback) {
+    if(!enableEventBus()){
+      return;
+    }
     var res = MhEventBus.instance.listen<T>((event) {
       callback.call(event);
     });
@@ -62,6 +72,9 @@ abstract mixin class EventOwner {
   void onReceiveEvent(dynamic event);
 
   void releaseAllEvents() {
+    if(!enableEventBus()){
+      return;
+    }
     for (var element in eventSubscriptions) {
       element.cancel();
     }

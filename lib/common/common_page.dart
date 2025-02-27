@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 ///通用页面封装
 abstract class CommonPage extends StatelessWidget {
@@ -23,7 +24,7 @@ abstract class CommonPage extends StatelessWidget {
     );
   }
 
-  Color? backgroundColor(){
+  Color? backgroundColor() {
     return null;
   }
 
@@ -37,8 +38,14 @@ abstract class CommonPage extends StatelessWidget {
 
   void onPopInvokedWithResult(
       BuildContext context, bool didPop, dynamic result) {
-    if (didPop) {
-      Navigator.of(context).pop(result);
+    if (!didPop) {
+      if (Navigator.canPop(context)) {
+        if (result == null) {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).pop(result);
+        }
+      }
     }
   }
 
@@ -49,10 +56,13 @@ abstract class CommonPage extends StatelessWidget {
   }
 
   AppBar? getBackAppBar(BuildContext context,
-      {String? title, bool showBack = true,
-        Color? foregroundColor,
-        bool centerTitle = true,
-        List<Widget>? actions,Color backgroundColor = Colors.transparent}) {
+      {String? title,
+      bool showBack = true,
+      Color? foregroundColor,
+      bool centerTitle = true,
+      List<Widget>? actions,
+      bool statusBarLight = false,
+      Color backgroundColor = Colors.transparent}) {
     return AppBar(
       backgroundColor: backgroundColor,
       centerTitle: centerTitle,
@@ -74,10 +84,16 @@ abstract class CommonPage extends StatelessWidget {
             )
           : SizedBox(),
       leadingWidth: 56,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+      ),
       actions: actions,
       title: Text(
         title ?? "",
-        style: TextStyle(fontSize: 16, color:foregroundColor ??  Color(0xFf333333)),
+        style: TextStyle(
+            fontSize: 16, color: foregroundColor ?? Color(0xFf333333)),
       ),
     );
   }

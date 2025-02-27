@@ -50,10 +50,12 @@ abstract class SimpleListPageState<T extends StatefulWidget> extends State<T>
     if (initialRefresh) {
       refreshStatus = ListRefreshStatus.refreshing;
     }
-    listenEvent<CommonEvent>();
     WidgetsBinding.instance.addPostFrameCallback((a){
       onRefresh();
     });
+    if(enableEventBus()){
+      listenEvent<CommonEvent>();
+    }
   }
 
   @override
@@ -161,6 +163,7 @@ abstract class SimpleListPageState<T extends StatefulWidget> extends State<T>
     if (refresh && showSkeleton) {
       hideSkeleton();
     }
+    setState(() {});
   }
 
   void _doRefreshLogic() {

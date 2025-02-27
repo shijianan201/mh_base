@@ -1,12 +1,5 @@
-import 'package:flutter/widgets.dart';
-
-
-enum EventType {
-  none,
-}
-
 class CommonEvent {
-  final EventType eventType;
+  final int eventType;
   dynamic extra;
   dynamic extra2;
   dynamic extra3;

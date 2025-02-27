@@ -1,13 +1,21 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mh_base/common/common_page.dart';
+import 'package:mh_base/common/event/common_event.dart';
+import 'package:mh_base/common/event/event_bus.dart';
 import 'package:mh_base/common/util/run_util.dart';
 import 'package:mh_base/page/extra/base_route_extra.dart';
 import 'package:provider/provider.dart';
 
 import '../http/api_request_host.dart';
 
-class SimpleChangeNotifier extends ChangeNotifier with ApiRequestHost {
+class SimpleChangeNotifier extends ChangeNotifier
+    with ApiRequestHost, EventOwner {
+  SimpleChangeNotifier() {
+    if (enableEventBus()) {
+      listenEvent<CommonEvent>();
+    }
+  }
 
   void runDelayed(Function runnable,
       {Duration duration = Duration.zero}) async {
@@ -19,8 +27,18 @@ class SimpleChangeNotifier extends ChangeNotifier with ApiRequestHost {
 
   @override
   void dispose() {
+    if (enableEventBus()) {
+      releaseAllEvents();
+    }
     super.dispose();
   }
+
+  @override
+  void onReceiveCommonEvent(CommonEvent event) {}
+
+  @override
+  void onReceiveEvent(event) {}
+
 }
 
 class CommonChangeNotifier extends SimpleChangeNotifier {
