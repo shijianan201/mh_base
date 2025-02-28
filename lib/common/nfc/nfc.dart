@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:mh_base/common/util/run_util.dart';
 import 'package:mh_base/log/mh_logger.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/nfc_manager_android.dart';
@@ -61,10 +62,8 @@ class Nfc {
     }
   }
 
-  Future<String?> startSession(
-    NfcTagType expectAndroidTagType,
-    NfcTagType expectIosTagType, {
-    Duration timeout = const Duration(seconds: 15),
+  Future<String?> startSession({
+    Duration timeout = const Duration(seconds: 30),
     String? startAlertMessageIOS,
     String? stopAlertMessageIOS,
     String? stopErrorMessageIOS,
@@ -87,14 +86,18 @@ class Nfc {
           },
           onDiscovered: (NfcTag tag) async {
             await stopSession();
-            var mTag = _loopMapTag(expectAndroidTagType, expectIosTagType, tag);
+            var mTag = await _loopMapTag(tag);
             logD(
-                "NFC scan result: $mTag $expectAndroidTagType ${expectIosTagType} ${tag}");
+                "NFC scan result: $mTag ${tag}");
             completer.complete(mTag);
           },
           alertMessageIOS: startAlertMessageIOS,
           onSessionErrorIOS: (error) {
-            completer.completeError(error);
+            logD(
+                "NFC scan ios failed: ${error.code} ${error.message}");
+            if(_listening) {
+              completer.completeError(error);
+            }
           });
       Future.delayed(timeout, () async {
         if (_listening) {
@@ -105,18 +108,20 @@ class Nfc {
         }
       });
     } catch (e) {
+      _listening = false;
       completer.completeError(e);
     }
     return await completer.future;
   }
 
-  String? _loopMapTag(NfcTagType expectAndroidTagType,
-      NfcTagType expectIosTagType, NfcTag tag) {
+  Future<String?> _loopMapTag(NfcTag tag) async {
     var supportTypes = NfcTagType.values.where((element) =>
         element.isSupportedOnPlatform(Platform.isAndroid ? "android" : "ios"));
     String? res;
     for (var a in supportTypes) {
-      res = _mapTag(a, expectIosTagType, tag);
+      res = await RunUtil.safeRun<String?>(() async {
+        return _mapTag(a, a, tag);
+      });
       if (res != null) {
         logD("nfc scan success type = ${a.name},res = $res");
         break;
@@ -201,6 +206,7 @@ class Nfc {
           break;
       }
     }
+    logD("nfc scan finish type =  ${expectIosTagType}、${expectIosTagType},res = $nfcId");
     if (nfcId == null) {
       return null;
     } else {
@@ -215,9 +221,6 @@ class Nfc {
     String? alertMessageIOS,
     String? errorMessageIOS,
   }) async {
-    if (!_listening) {
-      return;
-    }
     var a = await isAvailable();
     if (!a) {
       return;

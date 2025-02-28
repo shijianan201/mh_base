@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -86,8 +88,8 @@ abstract class CommonPage extends StatelessWidget {
       leadingWidth: 56,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Platform.isAndroid ? Brightness.dark :Brightness.light,
+        statusBarBrightness: Platform.isAndroid ? Brightness.dark :Brightness.light,
       ),
       actions: actions,
       title: Text(

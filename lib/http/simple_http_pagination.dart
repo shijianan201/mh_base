@@ -78,6 +78,11 @@ class SimpleHttpPagination<T> {
     dataList.add(data);
   }
 
+
+  bool isEmpty(){
+    return dataList.isEmpty;
+  }
+
   void removeList(List<T> removeList){
     for (var e in removeList) {
       dataList.remove(e);
