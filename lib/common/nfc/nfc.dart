@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'dart:io';
 
@@ -87,15 +88,15 @@ class Nfc {
           onDiscovered: (NfcTag tag) async {
             await stopSession();
             var mTag = await _loopMapTag(tag);
-            logD(
-                "NFC scan result: $mTag ${tag}");
-            completer.complete(mTag);
+            logD("NFC scan result: $mTag ${tag}");
+            if (!completer.isCompleted) {
+              completer.complete(mTag);
+            }
           },
           alertMessageIOS: startAlertMessageIOS,
           onSessionErrorIOS: (error) {
-            logD(
-                "NFC scan ios failed: ${error.code} ${error.message}");
-            if(_listening) {
+            logD("NFC scan ios failed: ${error.code} ${error.message}");
+            if (_listening && !completer.isCompleted) {
               completer.completeError(error);
             }
           });
@@ -104,12 +105,16 @@ class Nfc {
           await stopSession(
               alertMessageIOS: stopAlertMessageIOS,
               errorMessageIOS: stopErrorMessageIOS);
-          completer.completeError(TimeoutException("NFC session timeout"));
+          if (!completer.isCompleted) {
+            completer.completeError(TimeoutException("NFC session timeout"));
+          }
         }
       });
     } catch (e) {
       _listening = false;
-      completer.completeError(e);
+      if (!completer.isCompleted) {
+        completer.completeError(e);
+      }
     }
     return await completer.future;
   }
@@ -206,7 +211,8 @@ class Nfc {
           break;
       }
     }
-    logD("nfc scan finish type =  ${expectIosTagType}、${expectIosTagType},res = $nfcId");
+    logD(
+        "nfc scan finish type =  ${expectIosTagType}、${expectIosTagType},res = $nfcId");
     if (nfcId == null) {
       return null;
     } else {
@@ -234,3 +240,4 @@ class Nfc {
     _listening = false;
   }
 }
+*/

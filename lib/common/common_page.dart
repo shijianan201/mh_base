@@ -95,6 +95,7 @@ abstract class CommonPage extends StatelessWidget {
       title: Text(
         title ?? "",
         style: TextStyle(
+          fontWeight: FontWeight.w400,
             fontSize: 16, color: foregroundColor ?? Color(0xFf333333)),
       ),
     );
