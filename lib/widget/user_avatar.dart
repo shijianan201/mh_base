@@ -44,13 +44,7 @@ class UserAvatar extends StatelessWidget {
                 child: Container(
                   width: mSize,
                   height: mSize,
-                  child: Center(
-                    child: Icon(
-                      Icons.error,
-                      color: Colors.red,
-                      size: mSize / 2,
-                    ),
-                  ),
+                  color: Colors.grey,
                 ),
               );
             } else {
@@ -109,12 +103,10 @@ class UserAvatar extends StatelessWidget {
         height: mSize,
       );
     } else {
-      {
-        child = SizedBox(
-          width: mSize,
-          height: mSize,
-        );
-      }
+      child = SizedBox(
+        width: mSize,
+        height: mSize,
+      );
     }
     return SizedBox(
       width: size,
