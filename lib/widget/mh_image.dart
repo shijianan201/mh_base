@@ -115,23 +115,17 @@ class MhImage extends StatelessWidget {
         height: height,
       );
     }
-    return SizedBox(
+    return Container(
       width: width,
       height: height,
-      child: CircleAvatar(
-        child: Container(
-          width: width,
-          height: height,
-          padding: EdgeInsets.all(borderWidth),
-          decoration: BoxDecoration(
-            color: borderColor,
-            shape: BoxShape.circle,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(radius ?? 0),
-            child: child,
-          ),
-        ),
+      padding: EdgeInsets.all(borderWidth),
+      decoration: BoxDecoration(
+        color: borderColor,
+        shape: BoxShape.circle,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius ?? 0),
+        child: child,
       ),
     );
   }
