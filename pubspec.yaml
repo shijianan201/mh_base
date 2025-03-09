@@ -47,6 +47,8 @@ dependencies:
   email_validator: ^3.0.0
   package_info_plus: ^8.3.0
   nfc_manager: ^3.5.0
+  record: ^5.2.1
+  audioplayers: ^6.3.0
 
 dev_dependencies:
   flutter_test:
