@@ -67,13 +67,6 @@ class UserAvatar extends StatelessWidget {
                   color: Colors.grey,
                   width: mSize,
                   height: mSize,
-                  child: Center(
-                    child: SizedBox(
-                      width: mSize / 3,
-                      height: mSize / 3,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
                 ),
               );
             } else {

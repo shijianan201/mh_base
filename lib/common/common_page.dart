@@ -62,6 +62,7 @@ abstract class CommonPage extends StatelessWidget {
       bool showBack = true,
       Color? foregroundColor,
       bool centerTitle = true,
+      IconData? backIcon,
       List<Widget>? actions,
       bool statusBarLight = false,
       Color backgroundColor = Colors.transparent}) {
@@ -78,7 +79,7 @@ abstract class CommonPage extends StatelessWidget {
                   left: 28,
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios,
+                  backIcon ?? Icons.arrow_back_ios,
                   color: foregroundColor ?? Color(0xff333333),
                   size: 24,
                 ),
@@ -88,15 +89,18 @@ abstract class CommonPage extends StatelessWidget {
       leadingWidth: 56,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Platform.isAndroid ? Brightness.dark :Brightness.light,
-        statusBarBrightness: Platform.isAndroid ? Brightness.dark :Brightness.light,
+        statusBarIconBrightness:
+            Platform.isAndroid ? Brightness.dark : Brightness.light,
+        statusBarBrightness:
+            Platform.isAndroid ? Brightness.dark : Brightness.light,
       ),
       actions: actions,
       title: Text(
         title ?? "",
         style: TextStyle(
-          fontWeight: FontWeight.w400,
-            fontSize: 16, color: foregroundColor ?? Color(0xFf333333)),
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            color: foregroundColor ?? Color(0xFf333333)),
       ),
     );
   }

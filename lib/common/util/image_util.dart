@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_image_gallery_saver/flutter_image_gallery_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:mh_base/common/util/invoke_result.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -83,6 +83,6 @@ class ImageUtil {
     if (!photoStatus.success) {
       throw StateError("Save failed，photos permission leak");
     }
-    await FlutterImageGallerySaver.saveImage(source,);
+    await ImageGallerySaver.saveImage(source,name: "mh_lock_${DateTime.now().millisecondsSinceEpoch}.png");
   }
 }

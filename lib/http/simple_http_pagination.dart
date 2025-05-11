@@ -13,11 +13,13 @@ class SimpleHttpPagination<T> {
   int totalCount = 0;
   Future<HttpResult<List<T>>> Function(int pageNo, int pageSize,
       CancelToken? cancelToken, Map<String, dynamic>? params) onLoadData;
+  Function? onDataChanged;
 
   SimpleHttpPagination(
       {this.pageSize = 10,
       this.pageNo = 1,
         required this.dataList,
+        this.onDataChanged,
       required this.onLoadData});
 
   Future<RefreshResult> refresh(
@@ -35,6 +37,7 @@ class SimpleHttpPagination<T> {
         dataList.addAll(temp);
       }
       pageNo = 1;
+      onDataChanged?.call();
     }
     totalCount = res.response?.length ?? 0;
     firstRefresh = false;
@@ -76,6 +79,7 @@ class SimpleHttpPagination<T> {
 
   void addData(T data){
     dataList.add(data);
+    onDataChanged?.call();
   }
 
 
@@ -87,6 +91,7 @@ class SimpleHttpPagination<T> {
     for (var e in removeList) {
       dataList.remove(e);
     }
+    onDataChanged?.call();
   }
 
   void dispose() {

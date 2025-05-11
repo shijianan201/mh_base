@@ -29,3 +29,18 @@ class TextUtil {
     }
   }
 }
+
+extension StringExt on String?{
+
+  bool isNullOrEmpty(){
+    return this == null || this!.isEmpty;
+  }
+
+  int? toInt(){
+    if(this == null || this!.isEmpty){
+      return null;
+    }
+    return int.tryParse(this!);
+  }
+
+}

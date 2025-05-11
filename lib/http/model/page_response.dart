@@ -1,14 +1,15 @@
 //通过分页返回的数据封装
 import 'dart:convert';
 
+import 'package:mh_base/http/model/pagination_response.dart';
+
 import '../../../../../generated/json/base/json_convert_content.dart';
 
 class PageResponse<T> {
-  bool hasNext = false;
-  int page = 1;
-  int total = 0;
   List<T> dataList = [];
   String? traceId;
+  PaginationResponse? paginationResponse;
+
   PageResponse();
 
   factory PageResponse.fromJson(Map<String, dynamic> json) =>
@@ -19,21 +20,13 @@ class PageResponse<T> {
 
 PageResponse<T> $PageResponseFromJson<T>(Map<String, dynamic> json) {
   final PageResponse<T> apiRespEntity = PageResponse<T>();
-  final int? page = jsonConvert.convert<int>(json['page']);
-  if (page != null) {
-    apiRespEntity.page = page;
-  }
-  final int? total = jsonConvert.convert<int>(json['total']);
-  if (total != null) {
-    apiRespEntity.total = total;
+  dynamic pageRes = json['pagination'];
+  if (pageRes is Map<String,dynamic>) {
+    apiRespEntity.paginationResponse =
+        PaginationResponse.fromJson(pageRes);
   }
 
-  final bool? hasNext = jsonConvert.convert<bool>(json['has_next']);
-  if (hasNext != null) {
-    apiRespEntity.hasNext = hasNext;
-  }
-
-  dynamic dataRes = json['items'];
+  dynamic dataRes = json['list'];
   if (dataRes is List) {
     if (dataRes.isEmpty) {
       apiRespEntity.dataList = [];
@@ -60,9 +53,6 @@ PageResponse<T> $PageResponseFromJson<T>(Map<String, dynamic> json) {
 
 Map<String, dynamic> $PageResponseToJson(PageResponse response) {
   final Map<String, dynamic> data = <String, dynamic>{};
-  data['hasNext'] = response.hasNext;
-  data['page'] = response.page;
-  data['total'] = response.total;
   data['items'] = response.dataList.map((e) => jsonEncode(e)).toList();
 
   return data;

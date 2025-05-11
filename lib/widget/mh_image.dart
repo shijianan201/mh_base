@@ -32,6 +32,14 @@ class MhImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var path = urlOrPath;
+    if (path == null || path.isEmpty) {
+      return Container(
+        width: width,
+        height: height,
+        color: Colors.grey,
+      );
+    }
     var error = errorAvatarAssetsPath == null
         ? ClipRRect(
             borderRadius: BorderRadius.circular(radius ?? 0),
@@ -56,10 +64,6 @@ class MhImage extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           );
-    var path = urlOrPath;
-    if (path == null || path.isEmpty) {
-      return error;
-    }
     Widget child;
     if (sourceFrom == ImageSourceFrom.network) {
       child = CachedNetworkImage(
@@ -75,10 +79,10 @@ class MhImage extends StatelessWidget {
                   width: width,
                   height: height,
                   child: Center(
-                    child: SizedBox(
+                    child: Container(
                       width: 40,
                       height: 40,
-                      child: CircularProgressIndicator(),
+                      color: Colors.grey,
                     ),
                   ),
                 ),
