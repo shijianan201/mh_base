@@ -50,9 +50,10 @@ class CommonChangeNotifier extends SimpleChangeNotifier {
 ///基础页面通知者
 class CommonPageNotifier<T extends BaseRouteExtra>
     extends CommonChangeNotifier {
-  final GoRouterState state;
+  final GoRouterState? state;
+  final T? extra;
 
-  CommonPageNotifier({required this.state, required super.context});
+  CommonPageNotifier({required this.state, required super.context,this.extra});
 
   @override
   void dispose() {
@@ -61,7 +62,7 @@ class CommonPageNotifier<T extends BaseRouteExtra>
   }
 
   T getRouteExtra() {
-    var ex = this.state.extra;
+    var ex = this.extra ?? this.state?.extra;
     if (ex is T) {
       return ex;
     } else {
