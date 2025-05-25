@@ -35,4 +35,16 @@ class MhLoading {
   static void hideLoading() {
     EasyLoading.dismiss();
   }
+
+  static void showSuccess(
+    String status, {
+    Duration? duration,
+    bool? dismissOnTap,
+  }) {
+    EasyLoading.showSuccess(
+      status,
+      dismissOnTap: dismissOnTap,
+      duration: duration,
+    );
+  }
 }

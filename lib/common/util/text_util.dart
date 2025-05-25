@@ -1,4 +1,6 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/services.dart';
+import 'package:mh_base/widget/mh_toast.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
 class TextUtil {
@@ -41,6 +43,14 @@ extension StringExt on String?{
       return null;
     }
     return int.tryParse(this!);
+  }
+
+  void copy2clipboard() {
+    if (this == null || this!.isEmpty) {
+      return;
+    }
+    Clipboard.setData(ClipboardData(text: this!));
+    "已複製到剪貼板".toast();
   }
 
 }

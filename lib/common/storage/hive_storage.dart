@@ -1,9 +1,13 @@
+import 'dart:collection';
+
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class HiveStorage {
   static Box? _userBox;
   static Box? _globalBox;
+
+  static HashMap<String, Box> _userBoxMap = HashMap<String, Box>();
 
   static const _globalUserIdKey = "last_login_user_id";
 
@@ -15,6 +19,23 @@ class HiveStorage {
     if (userId != null && userId.isNotEmpty) {
       await openUserBox(userId);
     }
+  }
+
+  static Future<Box?> openBox(String boxName) async {
+    var box = await Hive.openBox(boxName);
+    return box;
+  }
+
+  static Future<void>? put2specify(String boxName, dynamic key, dynamic value) {
+    return getBox(boxName)?.put(key, value);
+  }
+
+  static T? getFromSpecify<T>(String boxName, dynamic key, {T? defaultValue}) {
+    return getBox(boxName)?.get(key, defaultValue: defaultValue);
+  }
+
+  static Box? getBox(String boxName) {
+    return _userBoxMap[boxName];
   }
 
   static Future<Box?> openUserBox(String userId) async {
