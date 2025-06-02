@@ -56,6 +56,8 @@ dependencies:
       ref: knottx-latest
   vibration: ^3.1.3
   local_auth: ^2.3.0
+  tap_debouncer: ^2.2.0
+  jpush_google_flutter: ^3.0.1
 
 dev_dependencies:
   flutter_test:

@@ -52,7 +52,12 @@ ApiResponse<T> $ApiResponseFromJson<T>(Map<String, dynamic> json) {
     }
   }
   if (HttpManager.jsonConverter != null) {
-    final T? data = HttpManager.jsonConverter!.call<T>(dataRes);
+    T? data;
+    try {
+      data = HttpManager.jsonConverter!.call<T>(dataRes);
+    }catch(e){
+      data = JsonConvert.fromJsonAsT(dataRes);
+    }
     if (data != null) {
       apiRespEntity.data = data;
     }

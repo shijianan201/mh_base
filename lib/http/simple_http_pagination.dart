@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 import '../common/simple_list_page_state.dart';
 import 'http_result.dart';
-import 'model/page_response.dart';
 
 class SimpleHttpPagination<T> {
   bool firstRefresh = true;
