@@ -16,4 +16,12 @@ class ShareUtil {
       logD("share failed response");
     }
   }
+
+  static Future<void> shareText(String content,{String? subject}) async{
+    try {
+      await Share.share(content, subject: subject);
+    }catch(e){
+
+    }
+  }
 }

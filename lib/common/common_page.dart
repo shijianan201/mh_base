@@ -3,6 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class AppBarAction {
+  String? name;
+  dynamic icon;
+  final Widget? Function(BuildContext)? childBuilder;
+  final GestureTapCallback? onTap;
+
+  AppBarAction(
+      {this.name = null,this.icon = null, this.childBuilder, required this.onTap});
+}
+
 ///通用页面封装
 abstract class CommonPage extends StatelessWidget {
   bool canPop = true;

@@ -60,7 +60,9 @@ class BasePushManager<T extends BaseUserProfile> extends UserListener<T> {
   }
 
   Future<Map<dynamic, dynamic>> setAlias(String alias) async {
-    assert(hasSetup);
+    if(!hasSetup){
+      return {};
+    }
     try {
       return _jPush.setAlias(alias);
     } catch (e) {
@@ -69,7 +71,9 @@ class BasePushManager<T extends BaseUserProfile> extends UserListener<T> {
   }
 
   Future<Map<dynamic, dynamic>> deleteAlias() async {
-    assert(hasSetup);
+    if(!hasSetup){
+      return {};
+    }
     try {
       return _jPush.deleteAlias();
     } catch (e) {
