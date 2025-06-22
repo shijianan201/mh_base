@@ -5,14 +5,17 @@ class OrLine extends StatelessWidget {
   final String text;
   final Color? lineColor;
   final TextStyle? textStyle;
+  final double? intent;
+  final double? endIntent;
 
-  const OrLine({super.key, required this.text, this.lineColor, this.textStyle});
+  const OrLine({super.key, required this.text, this.lineColor, this.textStyle, this.intent, this.endIntent});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
+        SizedBox(width: intent,),
         Expanded(
             child: Divider(
           color: Color(0xffc2c2c2),
@@ -33,6 +36,7 @@ class OrLine extends StatelessWidget {
           color: Color(0xffc2c2c2),
           height: 1,
         )),
+        SizedBox(width: endIntent,),
       ],
     );
   }
