@@ -10,7 +10,10 @@ class AppBarAction {
   final GestureTapCallback? onTap;
 
   AppBarAction(
-      {this.name = null,this.icon = null, this.childBuilder, required this.onTap});
+      {this.name = null,
+      this.icon = null,
+      this.childBuilder,
+      required this.onTap});
 }
 
 ///通用页面封装
@@ -75,6 +78,8 @@ abstract class CommonPage extends StatelessWidget {
       IconData? backIcon,
       List<Widget>? actions,
       bool statusBarLight = false,
+      TextStyle? titleStyle,
+        double? leadingWidth,
       Color backgroundColor = Colors.transparent}) {
     return AppBar(
       backgroundColor: backgroundColor,
@@ -96,7 +101,7 @@ abstract class CommonPage extends StatelessWidget {
               ),
             )
           : SizedBox(),
-      leadingWidth: 56,
+      leadingWidth: showBack ? (leadingWidth ?? 56) : (leadingWidth ?? 0),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness:
@@ -107,10 +112,11 @@ abstract class CommonPage extends StatelessWidget {
       actions: actions,
       title: Text(
         title ?? "",
-        style: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            color: foregroundColor ?? Color(0xFf333333)),
+        style: titleStyle ??
+            TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                color: foregroundColor ?? Color(0xFf333333)),
       ),
     );
   }

@@ -24,7 +24,7 @@ class TextUtil {
 
   static String? formatSecretEmail(String email){
     var lastIndex = email.lastIndexOf('@');
-    if(lastIndex < 0){
+    if(lastIndex <= 3){
       return email.replaceRange(3, email.length, "***");
     }else{
       return email.replaceRange(3, lastIndex, "***");
