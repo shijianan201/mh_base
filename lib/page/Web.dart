@@ -16,12 +16,14 @@ class WebRouteExtra extends CommonRouteExtra {
   bool titleChangeByH5 = false;
   bool backCloseMode = false;
   List<AppBarAction> actions;
+  Map<String, dynamic> cookies = <String, dynamic>{}; //自定义请求头>
 
   WebRouteExtra(
       {required this.title,
       this.url,
       this.titleChangeByH5 = false,
       this.backCloseMode = false,
+      this.cookies = const {},
       this.actions = const []});
 }
 
@@ -29,6 +31,8 @@ class WebPageNotifier extends CommonPageNotifier<WebRouteExtra> {
   final WebViewController _controller = WebViewController();
   int loadingProgress = 0;
   bool loadFailed = false;
+  final cookieManager = WebViewCookieManager();
+  Future<void>? initFuture;
 
   WebPageNotifier({required super.context, required super.state}) {
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
@@ -44,10 +48,18 @@ class WebPageNotifier extends CommonPageNotifier<WebRouteExtra> {
     }, onNavigationRequest: (a) {
       return NavigationDecision.navigate;
     }));
-    loadUrl();
+    initFuture = loadUrl();
   }
 
-  void loadUrl() {
+  Future<void> setCookie(String domain) async {
+    var cookies = getRouteExtra().cookies;
+    cookies.forEach((key, value) async {
+      await cookieManager
+          .setCookie(WebViewCookie(name: key, value: value, domain: domain));
+    });
+  }
+
+  Future<void> loadUrl() async {
     var url = getRouteExtra().url;
     if (url.isNullOrEmpty()) {
       loadFailed = true;
@@ -56,7 +68,10 @@ class WebPageNotifier extends CommonPageNotifier<WebRouteExtra> {
     }
     try {
       var uri = Uri.parse(url!);
-      _controller.loadRequest(uri);
+      await setCookie(uri.host);
+      await _controller.loadRequest(uri);
+      loadFailed = false;
+      notifyListeners();
     } catch (e) {
       logE("加載url失敗,url = $url", error: e);
       loadFailed = true;
@@ -109,27 +124,26 @@ class WebPage extends CommonProviderExtraPage<WebPageNotifier> {
   @override
   Widget buildProviderBody(
       BuildContext context, WebPageNotifier controller, Widget? child) {
-    return Column(
-      children: [
-        if (controller.loadingProgress < 100 || controller.loadFailed)
-          LinearProgressIndicator(
-            minHeight: 4,
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation(Colors.red),
-            value: controller.loadingProgress.toDouble() / 100,
+    return FutureBuilder(future: controller.initFuture, builder: (a,b){
+      if(b.connectionState != ConnectionState.done){
+        return LinearProgressIndicator(
+          minHeight: 4,
+          backgroundColor: Colors.grey[300],
+          valueColor: AlwaysStoppedAnimation(Colors.red),
+          value: controller.loadingProgress.toDouble() / 100,
+        );
+      }else{
+        return controller.loadFailed
+            ? MhInkWell(
+          onTap: () {
+            controller.loadUrl();
+          },
+          child: Column(
+            children: [Text("頁面加載失敗，點擊空白處重識")],
           ),
-        Expanded(
-            child: controller.loadFailed
-                ? MhInkWell(
-                    onTap: () {
-                      controller.loadUrl();
-                    },
-                    child: Column(
-                      children: [Text("頁面加載失敗，點擊空白處重識")],
-                    ),
-                  )
-                : WebViewWidget(controller: controller._controller))
-      ],
-    );
+        )
+            : WebViewWidget(controller: controller._controller);
+      }
+    });
   }
 }
