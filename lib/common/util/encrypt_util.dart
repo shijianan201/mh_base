@@ -7,9 +7,13 @@ import 'dart:convert';
 import 'name_util.dart';
 
 class EncryptUtil {
-  static String md5Encrypt(String text) {
-    Uint8List content = const Utf8Encoder().convert(text);
-    Digest digest = md5.convert(content);
+  // 密匙
+  static const String SECRET_KEY = 'WJiol_8776#';
+
+  static String md5Encrypt(String password) {
+    final str = 'password=$password&key=$SECRET_KEY';
+    var bytes = utf8.encode(str);
+    var digest = md5.convert(bytes);
     return digest.toString();
   }
 
