@@ -7,6 +7,15 @@ environment:
   sdk: ^3.6.1
   flutter: ">=1.17.0"
 
+# 指定支持的平台
+flutter_platforms:
+  android: true
+  ios: true
+  web: false
+  linux: false
+  macos: false
+  windows: false
+
 dependency_overrides:
   vm_service: 14.3.0
 
@@ -46,7 +55,7 @@ dependencies:
   email_validator: ^3.0.0
   package_info_plus: ^8.3.0
   nfc_manager: ^3.5.0
-  record: ^5.2.1
+  record: ^6.1.1
   audioplayers: ^6.3.0
   date_format: ^2.0.9
   flutter_datetime_picker_plus: ^2.2.0
