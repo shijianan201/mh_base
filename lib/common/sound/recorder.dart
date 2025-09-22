@@ -6,7 +6,7 @@ import 'package:record/record.dart';
 abstract class IRecorder {
   Future<void> init();
 
-  Future<void> start(String filePath, int durationSeconds,
+  Future<bool> start(String filePath, int durationSeconds,
       Function(String?)? autoCloseCallback);
 
   Future<String?> stop();
@@ -93,27 +93,36 @@ class RecordRecorder extends IRecorder {
   Future<void> init() async {}
 
   @override
-  Future<void> start(String filePath, int durationSeconds,
+  Future<bool> start(String filePath, int durationSeconds,
       Function(String? p1)? autoCloseCallback) async {
-    if (await record.isRecording()) {
-      record.cancel();
+    if(await record.hasPermission()){
+      if (await record.isRecording()) {
+        record.cancel();
+      }
+      this.filePath = filePath;
+      timer?.cancel();
+      timer = Timer(Duration(seconds: durationSeconds), () async {
+        await stop();
+        autoCloseCallback?.call(filePath);
+      });
+      try {
+        await record.start(
+            const RecordConfig(
+                encoder: AudioEncoder.wav,
+                bitRate: 128,
+                sampleRate: 16000,
+                numChannels: 1,
+                autoGain: true,
+                noiseSuppress: true,
+                echoCancel: true),
+            path: filePath);
+        return true;
+      }catch(e){
+        return false;
+      }
+    }else{
+      return false;
     }
-    this.filePath = filePath;
-    timer?.cancel();
-    timer = Timer(Duration(seconds: durationSeconds), () async {
-      await stop();
-      autoCloseCallback?.call(filePath);
-    });
-    await record.start(
-        const RecordConfig(
-            encoder: AudioEncoder.wav,
-            bitRate: 128,
-            sampleRate: 16000,
-            numChannels: 1,
-            autoGain: true,
-            noiseSuppress: true,
-            echoCancel: true),
-        path: filePath);
   }
 
   @override

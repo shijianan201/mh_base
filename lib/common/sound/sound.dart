@@ -30,28 +30,20 @@ class Sound {
     return "${directory.path}/audio/";
   }
 
-  Future<bool> checkRecordPermission() async {
-    var permission = await Permission.microphone.status;
-    if (permission == PermissionStatus.granted) {
-      return true;
-    } else {
-      return await Permission.microphone.request() == PermissionStatus.granted;
-    }
-  }
 
   Future<void> startRecorder(BuildContext context,
       {int maxLen = maxLength, Function(String?)? autoCloseCallback}) async {
     String fileName = "${DateTime.now().millisecondsSinceEpoch}.wav";
     String filePath = "${await getRecorderDirectoryPath()}$fileName";
-    if (await checkRecordPermission()) {
-      var file = File(filePath);
-      if (file.existsSync()) {
-        await file.delete(recursive: true);
-      }
-      file.createSync(recursive: true, exclusive: true);
-      await iRecorder.start(filePath, maxLen, autoCloseCallback);
+    var file = File(filePath);
+    if (file.existsSync()) {
+      await file.delete(recursive: true);
+    }
+    file.createSync(recursive: true, exclusive: true);
+    var res = await iRecorder.start(filePath, maxLen, autoCloseCallback);
+    if(res) {
       this.filePath = filePath;
-    } else {
+    }else{
       await openAppSettings();
     }
   }
