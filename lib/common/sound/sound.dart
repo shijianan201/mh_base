@@ -30,10 +30,11 @@ class Sound {
     return "${directory.path}/audio/";
   }
 
-
   Future<void> startRecorder(BuildContext context,
       {int maxLen = maxLength, Function(String?)? autoCloseCallback}) async {
-    String fileName = "${DateTime.now().millisecondsSinceEpoch}.wav";
+    String fileName = "${DateTime
+        .now()
+        .millisecondsSinceEpoch}.wav";
     String filePath = "${await getRecorderDirectoryPath()}$fileName";
     var file = File(filePath);
     if (file.existsSync()) {
@@ -41,9 +42,9 @@ class Sound {
     }
     file.createSync(recursive: true, exclusive: true);
     var res = await iRecorder.start(filePath, maxLen, autoCloseCallback);
-    if(res) {
+    if (res) {
       this.filePath = filePath;
-    }else{
+    } else {
       await openAppSettings();
     }
   }
@@ -85,11 +86,17 @@ class Sound {
     try {
       await stopPlayer();
       if (path.startsWith("http")) {
-        await audioPlayer.play(UrlSource(path));
+        String savePath =
+            "${await getRecorderDirectoryPath()}${DateTime
+            .now()
+            .millisecondsSinceEpoch}.wav";
+        await Dio().download(path, savePath);
+        await audioPlayer
+            .play(DeviceFileSource(savePath, mimeType: "audio/wav"));
       } else {
         var fileExist = await File(path).exists();
         if (fileExist) {
-          await audioPlayer.play(DeviceFileSource(path));
+          await audioPlayer.play(DeviceFileSource(path, mimeType: "audio/wav"));
         } else {
           "播放失敗".toast();
         }
@@ -97,7 +104,7 @@ class Sound {
     } catch (e) {
       "播放失敗".toast();
       completer.complete();
-    }
+    } finally {}
     return await completer.future;
   }
 
