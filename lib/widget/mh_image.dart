@@ -12,7 +12,7 @@ class MhImage extends StatelessWidget {
   double? height;
   double? radius;
   BoxFit? fit;
-  double borderWidth = 1;
+  double borderWidth = 0;
   Color borderColor = Colors.white;
   String? defaultAvatarAssetsPath;
   String? errorAvatarAssetsPath;
@@ -25,7 +25,7 @@ class MhImage extends StatelessWidget {
       this.radius,
       this.fit = BoxFit.cover,
       this.borderColor = Colors.white,
-      this.borderWidth = 1,
+      this.borderWidth = 0,
       this.sourceFrom = ImageSourceFrom.network,
       this.errorAvatarAssetsPath,
       this.defaultAvatarAssetsPath});
@@ -46,6 +46,7 @@ class MhImage extends StatelessWidget {
             child: Container(
               width: width,
               height: height,
+              color: Colors.grey,
               child: Center(
                 child: Icon(
                   Icons.error,
@@ -61,7 +62,7 @@ class MhImage extends StatelessWidget {
               errorAvatarAssetsPath!,
               width: width,
               height: height,
-              fit: BoxFit.fill,
+              fit: BoxFit.contain,
             ),
           );
     Widget child;
@@ -91,7 +92,7 @@ class MhImage extends StatelessWidget {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(radius ?? 0),
                 child: Image.asset(defaultAvatarAssetsPath!,
-                    width: width, height: height, fit: BoxFit.fill),
+                    width: width, height: height, fit: BoxFit.contain),
               );
             }
           },
@@ -125,7 +126,7 @@ class MhImage extends StatelessWidget {
       padding: EdgeInsets.all(borderWidth),
       decoration: BoxDecoration(
         color: borderColor,
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(radius ?? 0),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius ?? 0),

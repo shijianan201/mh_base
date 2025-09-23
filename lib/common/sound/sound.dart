@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -17,6 +18,8 @@ class Sound {
 
   String? filePath;
 
+  static final HashMap<String, String> _downloadAudioCache = HashMap();
+
   Sound() {
     init();
   }
@@ -30,18 +33,21 @@ class Sound {
     return "${directory.path}/audio/";
   }
 
+  Future<String> getRecorderDownloadPath() async {
+    Directory directory = await getTemporaryDirectory();
+    return "${directory.path}/download/";
+  }
+
   Future<void> startRecorder(BuildContext context,
-      {int maxLen = maxLength, Function(String?)? autoCloseCallback}) async {
-    String fileName = "${DateTime
-        .now()
-        .millisecondsSinceEpoch}.wav";
+      {int maxLen = maxLength,Function(int)? onTickerCallback, Function(String?)? autoCloseCallback}) async {
+    String fileName = "${DateTime.now().millisecondsSinceEpoch}.wav";
     String filePath = "${await getRecorderDirectoryPath()}$fileName";
     var file = File(filePath);
     if (file.existsSync()) {
       await file.delete(recursive: true);
     }
     file.createSync(recursive: true, exclusive: true);
-    var res = await iRecorder.start(filePath, maxLen, autoCloseCallback);
+    var res = await iRecorder.start(filePath, maxLen,onTickerCallback, autoCloseCallback);
     if (res) {
       this.filePath = filePath;
     } else {
@@ -69,42 +75,73 @@ class Sound {
 
   StreamSubscription<void>? playStreamSubs;
   StreamSubscription<void>? playDurationSubs;
+  StreamSubscription<Duration>? durationSubs;
 
   Future<void> play(String path,
-      {ValueChanged<Duration>? onPositionChanged}) async {
+      {ValueChanged<Duration>? onDurationChanged,
+      ValueChanged<Duration>? onPositionChanged}) async {
     Completer<void> completer = Completer();
     playStreamSubs?.cancel();
     playStreamSubs = audioPlayer.onPlayerComplete.listen((v) {
       completer.complete();
       playDurationSubs?.cancel();
       playStreamSubs?.cancel();
+      durationSubs?.cancel();
     });
     playDurationSubs?.cancel();
     playDurationSubs = audioPlayer.onPositionChanged.listen((d) {
       onPositionChanged?.call(d);
     });
-    try {
-      await stopPlayer();
-      if (path.startsWith("http")) {
-        String savePath =
-            "${await getRecorderDirectoryPath()}${DateTime
-            .now()
-            .millisecondsSinceEpoch}.wav";
-        await Dio().download(path, savePath);
+    durationSubs?.cancel();
+    durationSubs = audioPlayer.onDurationChanged.listen((a) {
+      onDurationChanged?.call(a);
+    });
+    Future<void> playLocal(String filePath) async {
+      var fileExist = await File(filePath).exists();
+      if (fileExist) {
         await audioPlayer
-            .play(DeviceFileSource(savePath, mimeType: "audio/wav"));
+            .play(DeviceFileSource(filePath, mimeType: "audio/wav"));
+      } else {
+        completer.completeError(AssertionError());
+      }
+    }
+
+    await stopPlayer();
+    if (Platform.isAndroid) {
+      if (path.startsWith("http://") || path.startsWith("https://")) {
+        await audioPlayer.play(UrlSource(path, mimeType: "audio/wav"));
       } else {
         var fileExist = await File(path).exists();
         if (fileExist) {
           await audioPlayer.play(DeviceFileSource(path, mimeType: "audio/wav"));
         } else {
-          "播放失敗".toast();
+          completer.completeError(AssertionError());
         }
       }
-    } catch (e) {
-      "播放失敗".toast();
-      completer.complete();
-    } finally {}
+    } else if (Platform.isIOS) {
+      if (path.startsWith("http://") || path.startsWith("https://")) {
+        var cachedPath = _downloadAudioCache[path];
+        if (cachedPath == null) {
+          var serverName = path.split("/").last;
+          var savePath = "${await getRecorderDownloadPath()}$serverName";
+          var fileExist = await File(savePath).exists();
+          if (fileExist) {
+            await audioPlayer
+                .play(DeviceFileSource(savePath, mimeType: "audio/wav"));
+          } else {
+            await Dio().download(path, savePath);
+            _downloadAudioCache[path] = savePath;
+            await playLocal(savePath);
+          }
+        } else {
+          await playLocal(cachedPath);
+        }
+      } else {
+        await playLocal(path);
+      }
+    } else {
+      completer.completeError(UnsupportedError("unsupport platform"));
+    }
     return await completer.future;
   }
 
@@ -116,6 +153,9 @@ class Sound {
 
   void dispose() async {
     try {
+      playDurationSubs?.cancel();
+      playStreamSubs?.cancel();
+      durationSubs?.cancel();
       await iRecorder.dispose();
       await audioPlayer.dispose();
     } catch (e) {}
